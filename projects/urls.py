@@ -16,5 +16,8 @@ urlpatterns = [
     # 此处每个path中第一个参数一般都留空
     # path('', hello),
     # 类视图路由,path()第二个参数为：类视图类名.as_view()
-    path('', ProjectsView.as_view())
+    path('', ProjectsView.as_view()),
+    # `:`左边为路径参数类型转化器，右边为路径参数变量名
+    # Django提供了int,slug,uuid路径参数类型转化器
+    path('<int:pk>/', ProjectsView.as_view())
 ]
