@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 # Create your views here.
@@ -39,7 +39,13 @@ class ProjectsView(View):
         :return:
         '''
         if pk:
-            return HttpResponse(f"<h1>GET>>>Project {pk} Detail Page!</h1>")
+            data = {
+                'name': 'tester',
+                'projectId': pk
+            }
+            # return HttpResponse(f"<h1>GET>>>Project {pk} Detail Page!</h1>")
+            # 传入字典，返回json格式数据
+            return JsonResponse(data)
         else:
             return HttpResponse("<h1>GET>>>Projects Page!</h1>")
     def post(self, request):

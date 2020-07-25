@@ -75,9 +75,23 @@ WSGI_APPLICATION = 'LearnDjango.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 指定数据库引擎
+        'ENGINE': 'django.db.backends.mysql',
+        # 指定数据库名称
+        'NAME': 'django_test',
+        # 指定数据库用户名
+        'USER': 'root',
+        # 指定数据库密码
+        'PASSWORD': '123456',
+        # 指定数据库的host
+        'HOST': '81.70.33.238',
+        # 指定数据库的port
+        'PORT': 5005
     }
 }
 
