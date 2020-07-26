@@ -52,7 +52,7 @@ class Projects(models.Model):
             ⑥DO_NOTHING
                 不采取行动
     '''
-    project = models.ForeignKey('projects.Projects', on_delete=models.SET_DEFAULT(), verbose_name='所属项目', help_text='所属项目')
+    project = models.ForeignKey('projects.Projects', on_delete=models.CASCADE, verbose_name='所属项目', help_text='所属项目')
 
     # 定义子类Meta，用于设置当前数据库模型的元数据信息
     class Meta:

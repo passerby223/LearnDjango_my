@@ -11,15 +11,21 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import configparser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 配置文件
+config = configparser.ConfigParser()
+config.read(os.path.join(BASE_DIR, 'LearnDjango/config.ini'))
+a = config['MysqlDB']['DBHost']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^*eddzwy4z5lgamil4r$0micy#27lo3x&v@l+2sg6q5lt=q)4g'
+SECRET_KEY = config.get('SECRET_KEY', 'secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,15 +90,15 @@ DATABASES = {
         # 指定数据库引擎
         'ENGINE': 'django.db.backends.mysql',
         # 指定数据库名称
-        'NAME': 'django_test',
+        'NAME': config['MysqlDB']['DBName'],
         # 指定数据库用户名
-        'USER': 'root',
+        'USER': config['MysqlDB']['DBUser'],
         # 指定数据库密码
-        'PASSWORD': '123456',
+        'PASSWORD': config['MysqlDB']['DBPassword'],
         # 指定数据库的host
-        'HOST': '81.70.33.238',
+        'HOST': config['MysqlDB']['DBHost'],
         # 指定数据库的port
-        'PORT': 5005
+        'PORT': config.getint('MysqlDB', 'DBPort')
     }
 }
 
