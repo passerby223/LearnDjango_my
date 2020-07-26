@@ -18,7 +18,7 @@
     python3 manage.py startapp 应用名称
     ```
 3. 去项目目录下的`settings.py`中注册子应用
-    ```bash
+    ```python
     INSTALLED_APPS = [
         'django.contrib.admin',
         'django.contrib.auth',
@@ -30,3 +30,23 @@
         'projects.apps.ProjectsConfig'
     ]
     ```
+# 创建项目`admin`后台的超级管理员,并访问`admin`后台页面
+1. 迁移项目所有数据表
+    ```bash
+    python3 manage.py migrate
+    ```
+2. 创建超级管理员
+    ```bash
+    python3 manage.py createsuperuser
+    # 根据终端提示进行操作即可
+    ```
+3. 去`app应用`目录下的`admin.py`中注册`app应用`对应的`models`
+    ```python
+    from django.contrib import admin
+    from projects.models import Projects
+    
+    # Register your models here.
+    
+    admin.site.register(Projects)
+    ```
+4. 启动项目，打开`admin`后台管理页面`http://IP:端口号/admin/`，`账号密码`就是刚创建的`超级用户`的`账号及密码`

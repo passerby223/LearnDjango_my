@@ -19,7 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 配置文件
 config = configparser.ConfigParser()
 config.read(os.path.join(BASE_DIR, 'LearnDjango/config.ini'))
-a = config['MysqlDB']['DBHost']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
