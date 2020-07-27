@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
+from projects.models import Projects
 
 # Create your views here.
 '''
@@ -26,28 +27,48 @@ def hello(request):
 类视图
 '''
 class ProjectsView(View):
+    # def get(self, request, pk=None):
+    #     '''
+    #     # 1.使用request.GET来获取查询字符串参数
+    #     # 2.request.GET返回的是一个类字典对象，支持字典中的所有操作。
+    #     # 3.获取到的查询字符串参数中，如果有多个参数key值相同，
+    #       则使用request.GET.get('key值')获取到的value值是查询字符串路径中最后一个key的value值。
+    #       可以使用request.GET.getlist('key值')来获取多个相同key值的参数。
+    #     # 4.使用projectId来获取路径参数中的变量
+    #     :param request:HttpRequest对象，包含前端用户的所有请求信息
+    #     :param projectId:接收路径参数中的变量
+    #     :return:
+    #     '''
+    #     if pk:
+    #         data = {
+    #             'name': 'tester',
+    #             'projectId': pk
+    #         }
+    #         # return HttpResponse(f"<h1>GET>>>Project {pk} Detail Page!</h1>")
+    #         # 传入字典，返回json格式数据
+    #         return JsonResponse(data)
+    #     else:
+    #         return HttpResponse("<h1>GET>>>Projects Page!</h1>")
     def get(self, request, pk=None):
         '''
-        # 1.使用request.GET来获取查询字符串参数
-        # 2.request.GET返回的是一个类字典对象，支持字典中的所有操作。
-        # 3.获取到的查询字符串参数中，如果有多个参数key值相同，
-          则使用request.GET.get('key值')获取到的value值是查询字符串路径中最后一个key的value值。
-          可以使用request.GET.getlist('key值')来获取多个相同key值的参数。
-        # 4.使用projectId来获取路径参数中的变量
         :param request:HttpRequest对象，包含前端用户的所有请求信息
         :param projectId:接收路径参数中的变量
-        :return:
         '''
-        if pk:
-            data = {
-                'name': 'tester',
-                'projectId': pk
-            }
-            # return HttpResponse(f"<h1>GET>>>Project {pk} Detail Page!</h1>")
-            # 传入字典，返回json格式数据
-            return JsonResponse(data)
-        else:
-            return HttpResponse("<h1>GET>>>Projects Page!</h1>")
+        '''
+        新增数据方法一
+        '''
+        # 创建模型类对象，此时并未执行SQL语句
+        # obj01 = Projects(name='销售品管理平台', leader='Mike', tester='tester03', developer='developer03', desc='销售品管理平台接口自动化')
+        # 调用save()方法保存后，才回去数据库中执行插入数据的SQL
+        # obj01.save()
+        '''
+        新增数据方法二
+        '''
+        Projects.objects.create(name='天翼优惠券平台', leader='Lucy', tester='tester04', developer='developer04', desc='天翼优惠券平台接口自动化项目')
+
+        pass
+        return JsonResponse({"hello": "world"})
+
     def post(self, request):
         '''
         # 1. 使用request.POST.get('key值')来获取www-form表单参数

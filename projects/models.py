@@ -34,3 +34,7 @@ class Projects(models.Model):
         verbose_name = '项目'
         # 在英文表名下表现为复数形式，会自动在英文表名后边加一个`s`
         verbose_name_plural = '项目'
+
+    # 重写__str__()方法，使admin后台中展示model中定义的name
+    def __str__(self):
+        return self.name

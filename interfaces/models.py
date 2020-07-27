@@ -2,7 +2,7 @@ from django.db import models
 
 
 # Create your models here.
-class Projects(models.Model):
+class Interfaces(models.Model):
     '''
     创建projects模型类
     4. 定义一个类属性，相当于数据表中的一个字段
@@ -62,3 +62,7 @@ class Projects(models.Model):
         verbose_name = '接口'
         # 在英文表名下表现为复数形式，会自动在英文表名后边加一个`s`
         verbose_name_plural = '接口'
+
+    # 重写__str__()方法，使admin后台中展示model中定义的name
+    def __str__(self):
+        return self.name

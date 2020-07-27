@@ -50,3 +50,12 @@
     admin.site.register(Projects)
     ```
 4. 启动项目，打开`admin`后台管理页面`http://IP:端口号/admin/`，`账号密码`就是刚创建的`超级用户`的`账号及密码`
+# 通过`python shell`练习`Django`中`ORM`的`CRUD`操作
+1. 安装`ipython`
+    ```bash
+    pip3 install -i https://pypi.douban.com/simple ipython
+    ```
+2. 通过`python shell`激活一个`ipython`类型的终端，在该终端下操作会有智能提示
+    ```bash
+    python3 manage.py shell -i ipython
+    ```
