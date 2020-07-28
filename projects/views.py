@@ -55,6 +55,9 @@ class ProjectsView(View):
         :param projectId:接收路径参数中的变量
         '''
         '''
+        新增数据(Create)
+        '''
+        '''
         新增数据方法一
         '''
         # 创建模型类对象，此时并未执行SQL语句
@@ -64,8 +67,48 @@ class ProjectsView(View):
         '''
         新增数据方法二
         '''
-        Projects.objects.create(name='天翼优惠券平台', leader='Lucy', tester='tester04', developer='developer04', desc='天翼优惠券平台接口自动化项目')
-
+        # Projects.objects.create(name='天翼优惠券平台', leader='Lucy', tester='tester04', developer='developer04', desc='天翼优惠券平台接口自动化项目')
+        '''
+        查询数据(Retrieve)
+        '''
+        '''
+        1. 查询表内所有数据
+        '''
+        # 获取table所有数据,返回一个QuerySet查询集(列表)，
+        result1 = Projects.objects.all()
+        first_data_name_field_value = result1[0].name # 订单管理平台
+        '''
+        2. 获取某一条指定的数据使用get()方法
+            ①get()方法只能返回一条数据
+            ②如果返回多条数据或者查询的数据不存在就会抛出异常
+            ③get()方法的参数往往为`主键`或者`唯一键`
+        '''
+        result2 = Projects.objects.get(id=1) # result2=订单管理平台
+        result3 = Projects.objects.get(id=2) # result3=新生产平台
+        '''
+        3. 获取多条数据，使用filter()或者exclude()方法
+            使用filter返回的是满足条件的QuerySet，exclude()方法返回的是不满足条件的QuerySet
+        '''
+        result4 = Projects.objects.filter(leader='Jack') # result4=QuerySet
+        result5 = Projects.objects.exclude(leader='Jack') # result5=QuerySet
+        '''
+        4. 使用filter()过滤方法的特定用法
+            ①filter(模型类属性名(字段名)__contains)将包含指定字符串的所有数据返回
+            ②filter(模型类属性名(字段名)__icontains)忽略大小写
+            ③将startwith以给定字符串开头的所有数据返回
+            ④将in以给定范围的字符串的所有数据返回
+        '''
+        result6 = Projects.objects.filter(leader__contains='Jack')
+        result7 = Projects.objects.filter(leader__icontains='Jack')
+        result8 = Projects.objects.filter(leader__startswith='Ja')
+        result9 = Projects.objects.filter(leader__endswith='ck')
+        result10 = Projects.objects.filter(leader__in=['Lucy', 'Jack', 'Tom', 'jack'])
+        '''
+        5. 通过外键进行关联查询
+            filter(外键字段__从表字段名__contains)
+        '''
+        # 获取新建销售品接口所在的项目
+        result11 = Projects.objects.filter(interfaces__name='新建销售品') # 销售品管理平台
         pass
         return JsonResponse({"hello": "world"})
 
