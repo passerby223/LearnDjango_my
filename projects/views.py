@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from projects.models import Projects
+from django.db.models import Q
 
 # Create your views here.
 '''
@@ -90,6 +91,7 @@ class ProjectsView(View):
             使用filter返回的是满足条件的QuerySet，exclude()方法返回的是不满足条件的QuerySet
         '''
         result4 = Projects.objects.filter(leader='Jack') # result4=QuerySet
+        result4_ = Projects.objects.filter(leader='Mike') # result4=QuerySet
         result5 = Projects.objects.exclude(leader='Jack') # result5=QuerySet
         '''
         4. 使用filter()过滤方法的特定用法
@@ -109,7 +111,70 @@ class ProjectsView(View):
         '''
         # 获取新建销售品接口所在的项目
         result11 = Projects.objects.filter(interfaces__name='新建销售品') # 销售品管理平台
-        pass
+        '''
+        6. 比较查询
+            __gt：>
+            __gte：>=
+            __lt：<
+            __lte：<=
+        '''
+        result12 = Projects.objects.filter(id=2)
+        result13 = Projects.objects.filter(id__gt=2)
+        result14 = Projects.objects.filter(id__gte=2)
+        result15 = Projects.objects.filter(id__lt=2)
+        result16 = Projects.objects.filter(id__lte=2)
+        '''
+        7. 逻辑关系，多个条件查询
+            ①如果给filter指定多个条件，那么条件之间是与的关系
+            ②可以使用Q变量指定多个条件，那么条件之间是或的关系
+        '''
+        result17 = Projects.objects.filter(leader='Jack', name__contains='管理')
+        result18 = Projects.objects.filter(Q(leader='Mike') | Q(tester='tester01'))
+        '''
+        8. 查询集(QuerySet)操作
+            ①查询集相当于一个列表，支持列表中的大多数操作
+                通过数字索引获取值，
+                支持正向切片，不支持反向切片(负数)
+                for循环
+            ②查询集是对数据库操作的一种优化
+                查询集会缓存查询结果
+            ③支持惰性查询
+            ④支持链式操作
+                first()返回查询集中的第一条数据
+                last()返回查询集中的最后一条数据
+                
+        '''
+        # first()返回查询集中的第一条数据
+        result19 = Projects.objects.filter(leader__contains='ac').first()
+        # last()返回查询集中的最后一条数据
+        result20 = Projects.objects.filter(leader__contains='ac').last()
+        # 支持链式操作
+        result21 = Projects.objects.filter(leader__contains='ac').filter(developer='developer05')
+        '''
+        更新数据(update)
+            a.先获取到要修改的模型对象
+            b.进行修改操作
+            c.保存修改
+        '''
+        # obj_pro_01 = Projects.objects.get(id=5)
+        # obj_pro_01.desc = '合伙人平台接口自动化'
+        # obj_pro_01.save()
+        '''
+        删除数据(delete)
+            a.先获取到要删除的模型对象
+            b.进行删除操作(删除操作默认会执行保存)
+        '''
+        # obj_pro_02 = Projects.objects.filter(leader='Jack').filter(name__contains='删除')
+        # obj_pro_02.delete()
+        '''
+        排序操作
+            使用order_by()方法进行排序，默认从小到大排序；在字段名前加一个`-`号，代表从大到小排序
+            如果order_by()方法中第一个参数排序的结果都相同，则使用第二个参数进行排序
+        '''
+        # 从小到大排序
+        result22 = Projects.objects.filter(id__gte=2).order_by('id', 'name')
+        # 从大到小排序
+        result23 = Projects.objects.filter(id__gte=2).order_by('-id', 'name')
         return JsonResponse({"hello": "world"})
 
     def post(self, request):
