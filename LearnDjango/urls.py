@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from projects.views import index
+# from projects.views import index
 
 # 全局路由表
 # 1. urlpatterns为固定名称的列表
@@ -24,10 +24,10 @@ from projects.views import index
 # 4. 如果匹配不上，会自动抛出一个404异常
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index/', index),
+    # path('index/', index),
     # 这里使用include代表，当在前端访问`http://127.0.0.1:8000/hello/`时，
     # 会从子应用projects的路由表urls文件中去查找对应的路由，执行对应路由绑定的视图方法
     path('hello/', include('projects.urls')),
     # 类视图的父路由
-    path('projects/', include('projects.urls'))
+    path('api/v1/projects/', include('projects.urls'))
 ]

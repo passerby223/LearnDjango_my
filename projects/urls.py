@@ -5,7 +5,7 @@
 # @Description : 子应用路由表
 
 from django.urls import path
-from projects.views import hello, ProjectsView
+from projects.views import ProjectsList, ProjectsDetail
 
 # 子应用路由表
 # 1. 每一个子应用(模块)都会维护一个子路由(当前子应用的路由信息表)
@@ -16,8 +16,10 @@ urlpatterns = [
     # 此处每个path中第一个参数一般都留空
     # path('', hello),
     # 类视图路由,path()第二个参数为：类视图类名.as_view()
-    path('', ProjectsView.as_view()),
+    # path('', ProjectsView.as_view()),
     # `:`左边为路径参数类型转化器，右边为路径参数变量名
     # Django提供了int,slug,uuid路径参数类型转化器
-    path('<int:pk>/', ProjectsView.as_view())
+    # path('<int:pk>/', ProjectsView.as_view())
+    path('', ProjectsList.as_view()),
+    path('<int:pk>/', ProjectsDetail.as_view())
 ]
