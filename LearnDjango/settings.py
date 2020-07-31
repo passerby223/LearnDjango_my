@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 注册子应用projects
     'projects.apps.ProjectsConfig',
+    # 注册djangorestframework
+    'rest_framework',
     'interfaces.apps.InterfacesConfig'
 ]
 

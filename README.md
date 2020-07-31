@@ -59,3 +59,26 @@
     ```bash
     python3 manage.py shell -i ipython
     ```
+# 安装并配置DRF框架
+1. 安装`DRF`
+    ```bash
+    pip3 install -i https://pypi.douban.com/simple djangorestframework
+    # markdown为了接口在web中展示更好看
+    pip3 install -i https://pypi.douban.com/simple markdown
+    ```
+2. 在`setting.py`文件中注册`DRF`
+    ```bash
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        # 注册子应用projects
+        'projects.apps.ProjectsConfig',
+        # 注册djangorestframework
+        'rest_framework',
+        'interfaces.apps.InterfacesConfig'
+    ]
+    ```
