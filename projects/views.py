@@ -1,7 +1,7 @@
 import json
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views import View
-from projects.serializer import ProjectSerializer
+from projects.serializer import ProjectModelSerializer, ProjectModelSerializer
 from projects.models import Projects
 
 
@@ -33,7 +33,7 @@ class ProjectsList(View):
         #         "desc": project.desc
         #     })
         '''如果返回给前端的是数组(多条数据)时，需要添加many=True关键字参数'''
-        serializer_data = ProjectSerializer(instance=obj_pro, many=True)
+        serializer_data = ProjectModelSerializer(instance=obj_pro, many=True)
         # JsonResponse第一个参数默认只能为dict字典，如果要设置为其他数据类型，需要设置safe=False
         '''3. 将从数据库中获取到的数据返回给前端'''
         return JsonResponse(serializer_data.data, safe=False)
@@ -55,7 +55,7 @@ class ProjectsList(View):
         '''
         在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
         '''
-        serializer_data = ProjectSerializer(data=dict_data)
+        serializer_data = ProjectModelSerializer(data=dict_data)
         # 调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         # 如果raise_exception=True，那么校验失败后，会抛出异常
         try:
@@ -97,8 +97,8 @@ class ProjectsDetail(View):
         #     "desc": obj_pro.desc
         # }
         '''通过模型类对象(或者查询集)，传给instance可进行序列化操作'''
-        '''通过序列化器ProjectSerializer对象的data属性，就可以获取序列化后的字典'''
-        serializer_data = ProjectSerializer(instance=obj_pro)
+        '''通过序列化器ProjectModelSerializer对象的data属性，就可以获取序列化后的字典'''
+        serializer_data = ProjectModelSerializer(instance=obj_pro)
         return JsonResponse(serializer_data.data)
 
     def put(self, request, pk):
@@ -115,7 +115,7 @@ class ProjectsDetail(View):
         '''
         在创建序列化器时，如果同时给instance和data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的update()方法
         '''
-        serializer_data = ProjectSerializer(instance=obj_pro, data=dict_data)
+        serializer_data = ProjectModelSerializer(instance=obj_pro, data=dict_data)
         '''
         调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         如果raise_exception=True，那么校验失败后，会抛出异常
