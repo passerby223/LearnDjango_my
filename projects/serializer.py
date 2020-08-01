@@ -65,3 +65,16 @@ class ProjectSerializer(serializers.Serializer):
         if 'Jack' not in attrs.get('tester') and 'Jack' not in attrs.get('leader'):
             raise serializers.ValidationError('Jack必须是项目负责人或者是项目测试人!')
         return attrs
+
+    def create(self, validated_data):
+        return Projects.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        '''校验成功后的数据，可以使用`序列化对象.validated_data`属性来获取校验成功后的数据'''
+        instance.name = validated_data.get('name')
+        instance.leader = validated_data.get('leader')
+        instance.tester = validated_data.get('tester')
+        instance.developer = validated_data.get('developer')
+        instance.desc = validated_data.get('desc')
+        instance.save()
+        return instance

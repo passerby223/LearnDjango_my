@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+# @FileName    :DRF_views_basis.py
+# @Time        :2020/8/1 下午1:41
+# @Author      :passerby223
+# @Description :
 import json
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views import View
@@ -52,24 +57,35 @@ class ProjectsList(View):
         dict_data = json.loads(json_data, encoding='utf-8')
         '''2.校验前端输入的数据'''
         # 反序列化使用data参数
-        '''
-        在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
-        '''
-        serializer_data = ProjectSerializer(data=dict_data)
+        deserializer_data = ProjectSerializer(data=dict_data)
         # 调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         # 如果raise_exception=True，那么校验失败后，会抛出异常
         try:
-            serializer_data.is_valid(raise_exception=True)
+            deserializer_data.is_valid(raise_exception=True)
         except Exception as e:
             # 当调用is_valid()方法后，才可以调用errors属性，获取校验失败返回的错误提示信息
-            return JsonResponse(serializer_data.errors)
+            return JsonResponse(deserializer_data.errors)
         '''3.向数据库中添加一条数据，新增项目'''
+        # obj_pro = Projects.objects.create(
+        #     name=dict_data.get('name'),
+        #     leader=dict_data.get('leader'),
+        #     tester=dict_data.get('tester'),
+        #     developer=dict_data.get('developer'),
+        #     desc=dict_data.get('desc')
+        # )
         '''校验成功后的数据，可以使用`序列化对象.validated_data`属性来获取校验成功后的数据'''
-        '''
-        在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
-        '''
-        serializer_data.save()
-        '''4.将序列化数据返回给前端'''
+        obj_pro = Projects.objects.create(**deserializer_data.validated_data)
+        '''4.序列化数据，然后返回给前端'''
+        # res_data = {
+        #     "id": obj_pro.id,
+        #     "name": obj_pro.name,
+        #     "leader": obj_pro.leader,
+        #     "tester": obj_pro.tester,
+        #     "developer": obj_pro.developer,
+        #     "desc": obj_pro.desc
+        # }
+        '''序列化使用instance参数'''
+        serializer_data = ProjectSerializer(instance=obj_pro)
         return JsonResponse(serializer_data.data, status=201)
 
 
@@ -112,22 +128,35 @@ class ProjectsDetail(View):
         dict_data = json.loads(json_data, encoding='utf-8')
         '''3.校验前端输入的数据'''
         '''反序列化使用data参数'''
-        '''
-        在创建序列化器时，如果同时给instance和data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的update()方法
-        '''
-        serializer_data = ProjectSerializer(instance=obj_pro, data=dict_data)
+        deserializer_data = ProjectSerializer(data=dict_data)
         '''
         调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         如果raise_exception=True，那么校验失败后，会抛出异常
         '''
         try:
-            serializer_data.is_valid(raise_exception=True)
+            deserializer_data.is_valid(raise_exception=True)
         except Exception as e:
             # 当调用is_valid()方法后，才可以调用errors属性，获取校验失败返回的错误提示信息
-            return JsonResponse(serializer_data.errors)
-        '''4.更新项目, 通过前端传递过来的数据对字段值进行修改'''
-        serializer_data.save()
+            return JsonResponse(deserializer_data.errors)
+        '''4.通过前端传递过来的数据对字段值进行修改'''
+        '''校验成功后的数据，可以使用`序列化对象.validated_data`属性来获取校验成功后的数据'''
+        obj_pro.name = deserializer_data.validated_data.get('name')
+        obj_pro.leader = deserializer_data.validated_data.get('leader')
+        obj_pro.tester = deserializer_data.validated_data.get('tester')
+        obj_pro.developer = deserializer_data.validated_data.get('developer')
+        obj_pro.desc = deserializer_data.validated_data.get('desc')
+        '''保存更新'''
+        obj_pro.save()
         '''5.序列化数据，返回给前端'''
+        # res_data = {
+        #     "id": obj_pro.id,
+        #     "name": obj_pro.name,
+        #     "leader": obj_pro.leader,
+        #     "tester": obj_pro.tester,
+        #     "developer": obj_pro.developer,
+        #     "desc": obj_pro.desc
+        # }
+        serializer_data = ProjectSerializer(instance=obj_pro)
         return JsonResponse(serializer_data.data, status=201)
 
     def delete(self, request, pk):
