@@ -27,7 +27,7 @@ urlpatterns = [
     # path('index/', index),
     # 这里使用include代表，当在前端访问`http://127.0.0.1:8000/hello/`时，
     # 会从子应用projects的路由表urls文件中去查找对应的路由，执行对应路由绑定的视图方法
-    path('hello/', include('projects.urls')),
+    # path('hello/', include('projects.urls')),
     # 类视图的父路由
     path('api/v1/projects/', include('projects.urls'))
 ]

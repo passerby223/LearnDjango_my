@@ -82,3 +82,47 @@
         'interfaces.apps.InterfacesConfig'
     ]
     ```
+# DRF中使用开源的django-filter过滤引擎
+```bash
+# 安装
+pip3 install -i https://pypi.douban.com/simple django-filter
+# 配置
+from django_filters.rest_framework import DjangoFilterBackend
+# 视图类中指定Django-filter过滤引擎
+filter_backends = [DjangoFilterBackend]
+# 指定需要过滤的字段
+filterset_fields = ['id', 'name', 'leader']
+###############################################
+# 在setting.py文件中中全局指定过滤引擎
+# 注册app
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # 注册子应用projects
+    'projects.apps.ProjectsConfig',
+    # 注册djangorestframework
+    'rest_framework',
+    # 注册django-filter
+    'django_filters',
+    'interfaces.apps.InterfacesConfig',
+]
+# 指定全局过滤器
+REST_FRAMEWORK = {
+    # 默认响应渲染类
+    'DEFAULT_RENDERER_CLASSES': (
+        # json渲染器为第一优先级
+        'rest_framework.renderers.JSONRenderer',
+        # 可浏览的浏览器中html格式的API渲染器为第二优先级
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    # 全局指定过滤引擎,对所有类视图有效。也可以在类视图中单独指定过滤引擎，只对当前类视图有效
+    # 全局指定排序过滤引擎
+    # 'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.OrderingFilter'],
+    # 全局指定django-filter过滤引擎
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
+```

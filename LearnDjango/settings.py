@@ -44,17 +44,26 @@ INSTALLED_APPS = [
     'projects.apps.ProjectsConfig',
     # 注册djangorestframework
     'rest_framework',
-    'interfaces.apps.InterfacesConfig'
+    # 注册django-filter
+    'django_filters',
+    'interfaces.apps.InterfacesConfig',
 ]
 
 REST_FRAMEWORK = {
     # 默认响应渲染类
-    'DEFAULT_RENDERER_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': [
         # json渲染器为第一优先级
         'rest_framework.renderers.JSONRenderer',
         # 可浏览的浏览器中html格式的API渲染器为第二优先级
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    # 全局指定过滤引擎,对所有类视图有效。也可以在类视图中单独指定过滤引擎，只对当前类视图有效
+    # 全局指定排序过滤引擎
+    # 全局指定django-filter过滤引擎
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.OrderingFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
 }
 
 MIDDLEWARE = [
