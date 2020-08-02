@@ -47,6 +47,16 @@ INSTALLED_APPS = [
     'interfaces.apps.InterfacesConfig'
 ]
 
+REST_FRAMEWORK = {
+    # 默认响应渲染类
+    'DEFAULT_RENDERER_CLASSES': (
+        # json渲染器为第一优先级
+        'rest_framework.renderers.JSONRenderer',
+        # 可浏览的浏览器中html格式的API渲染器为第二优先级
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,13 +1,18 @@
+#!/usr/bin/python3
+# @FileName    :DRF_APIView_basis.py
+# @Time        :2020/8/2 下午4:19
+# @Author      :passerby223
+# @Description :
 import json
 from django.http import Http404
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from projects.serializer import ProjectModelSerializer
 from projects.models import Projects
 
 
-class ProjectsList(GenericAPIView):
+class ProjectsList(APIView):
     '''
     创建接口的步骤
     1.校验用户数据
@@ -15,15 +20,7 @@ class ProjectsList(GenericAPIView):
     3.操作数据库
     4.数据序列化
     '''
-    # queryset用于指定需要使用的查询集
-    queryset = Projects.objects.all()
-    # serializer_class指定需要使用到的序列化器类
-    serializer_class = ProjectModelSerializer
-    '''
-    使用lookup_field类属性，可以修改主键路由名称(就是api路径参数中的pk值，默认为pk，可以使用该属性进行覆盖。)
-    如果修改了，路径参数也得同步更新
-    '''
-    # lookup_field = 'id'
+
     def get(self, request):
         '''
         获取所有项目
@@ -33,7 +30,7 @@ class ProjectsList(GenericAPIView):
         '''1.从数据库获取所有项目信息'''
         obj_pro = Projects.objects.all()
         '''如果返回给前端的是数组(多条数据)时，需要添加many=True关键字参数'''
-        serializer_data = self.get_serializer(instance=obj_pro, many=True)
+        serializer_data = ProjectModelSerializer(instance=obj_pro, many=True)
         '''3. 将从数据库中获取到的数据返回给前端'''
         return Response(serializer_data.data)
 
@@ -54,7 +51,7 @@ class ProjectsList(GenericAPIView):
         '''
         在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
         '''
-        serializer_data = self.get_serializer(data=dict_data)
+        serializer_data = ProjectModelSerializer(data=dict_data)
         # 调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         # 如果raise_exception=True，那么校验失败后，会抛出异常
         try:
@@ -71,43 +68,29 @@ class ProjectsList(GenericAPIView):
         '''4.将序列化数据返回给前端'''
         return Response(serializer_data.data, status=201)
 
-# 1. 需要继承GenericAPIView基类
-class ProjectsDetail(GenericAPIView):
-    # 2.必须指定queryset和serializer_class类属性
-    # queryset用于指定需要使用的查询集
-    queryset = Projects.objects.all()
-    # serializer_class指定需要使用到的序列化器类
-    serializer_class = ProjectModelSerializer
-    '''
-    使用lookup_field类属性，可以修改主键路由名称(就是api路径参数中的pk值，默认为pk，可以使用该属性进行覆盖。)
-    如果修改了，路径参数也得同步更新
-    '''
-    # lookup_field = 'id'
+
+class ProjectsDetail(APIView):
+
     # 将获取指定ID为pk值的项目单独抽离出来为一个方法
-    # def get_object(self, pk):
-    #     try:
-    #         return Projects.objects.get(id=pk)
-    #     except Projects.DoesNotExist:
-    #         raise Http404
+    def get_object(self, pk):
+        try:
+            return Projects.objects.get(id=pk)
+        except Projects.DoesNotExist:
+            raise Http404
 
     def get(self, request, pk):
         '''1.校验前端传递的pk(项目ID)值，类型是否正确(正整数),在数据库中是否存在'''
         '''2.获取指定ID为pk值的项目'''
-        '''
-        如果继承了GenericAPIView基类，则不需要在手动创建get_object()这个方法了。
-        GenericAPIView类中默认会提供get_object()这个方法且不需要传参数(pk)
-        '''
-        obj_pro = self.get_object()
+        obj_pro = self.get_object(pk=pk)
         # 3.将返回的数据序列化成json格式数据，返回给前端
-        # 使用get_serializer()方法获取序列化器类
-        serializer_data = self.get_serializer(instance=obj_pro)
+        serializer_data = ProjectModelSerializer(instance=obj_pro)
         # 如果前端请求中未指定Accept，那么默认返回json格式数据
         return Response(serializer_data.data, status=200)
 
     def put(self, request, pk):
         '''1.校验前端传递的pk(项目ID)值，类型是否正确(正整数),在数据库中是否存在'''
         '''2.获取指定ID为pk值的项目'''
-        obj_pro = self.get_object()
+        obj_pro = self.get_object(pk=pk)
         json_data = request.body.decode('utf-8')
         dict_data = json.loads(json_data, encoding='utf-8')
         '''3.校验前端输入的数据'''
@@ -115,7 +98,7 @@ class ProjectsDetail(GenericAPIView):
         '''
         在创建序列化器时，如果同时给instance和data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的update()方法
         '''
-        serializer_data = self.get_serializer(instance=obj_pro, data=dict_data)
+        serializer_data = ProjectModelSerializer(instance=obj_pro, data=dict_data)
         '''
         调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         如果raise_exception=True，那么校验失败后，会抛出异常
@@ -133,6 +116,6 @@ class ProjectsDetail(GenericAPIView):
     def delete(self, request, pk):
         '''1.校验前端传递的pk(项目ID)值，类型是否正确(正整数),在数据库中是否存在'''
         '''2.获取指定ID为pk值的项目'''
-        obj_pro = self.get_object()
+        obj_pro = self.get_object(pk=pk)
         obj_pro.delete()
         return Response(None, status=204)
