@@ -9,6 +9,9 @@ from projects.serializer import ProjectModelSerializer
 from projects.models import Projects
 
 # 继承GenericAPIView基类，GenericAPIView基类可以提供过滤，排序，分页功能
+from utils.custom_pagination import PageNumberPaginationCustom
+
+
 class ProjectsList(GenericAPIView):
     '''
     创建接口的步骤
@@ -53,6 +56,10 @@ class ProjectsList(GenericAPIView):
     如果修改了，路径参数也得同步更新
     '''
     # lookup_field = 'id'
+    '''
+    在单个视图中指定自定义分页类PageNumberPaginationCustom，对其他视图类无效
+    '''
+    # pagination_class = PageNumberPaginationCustom
     def get(self, request):
         '''
         获取所有项目
@@ -64,10 +71,32 @@ class ProjectsList(GenericAPIView):
         obj_pro = self.get_queryset()
         # 6.使用filter_queryset()方法过滤查询
         obj_pro = self.filter_queryset(obj_pro)
+        # 7.使用paginate_queryset对排序和过滤后的数据进行分页，然后返回分页之后的查询集
+        '''
+        第①种情况：设置过滤条件并设置分页
+        因为setting.py文件中设置了分页的page个数为1页3条数据，数据库中tester=tester01的数据一共有5条
+        浏览器中通过: http://localhost:8000/api/v1/projects/?page=1&tester=tester01 来测试分页效果
+        通过httPie请求接口: http -v :8000/api/v1/projects/ tester==tester01 page==1来测试分页效果
+                           http -v :8000/api/v1/projects/ tester==tester01 page==2来测试分页效果
+        第②种情况：不设置过滤条件但设置分页，此时是按照从数据库中获取到的所有project数据列表来进行分页的
+        浏览器中通过:http://localhost:8000/api/v1/projects/?page=1 来测试分页效果
+                   http://localhost:8000/api/v1/projects/?page=2 来测试分页效果
+                   http://localhost:8000/api/v1/projects/?page=3 来测试分页效果
+        httPie: http -v :8000/api/v1/projects/ page==1 来测试分页效果
+                 http -v :8000/api/v1/projects/ page==2 来测试分页效果
+                 http -v :8000/api/v1/projects/ page==3 来测试分页效果
+        '''
+        page = self.paginate_queryset(obj_pro)
+        if page is not None:
+            # 如果设置了分页引擎(也就是page不为None),则使用下边的代码对分页后的数据进行处理并返回给前端
+            serializer = self.get_serializer(instance=page, many=True)
+            # 返回分页后的数据给前端
+            return self.get_paginated_response(serializer.data)
         '''如果返回给前端的是数组(多条数据)时，需要添加many=True关键字参数'''
-        serializer_data = self.get_serializer(instance=obj_pro, many=True)
+        # 如果没有设置分页引擎(也就是page为None),则直接将排序或过滤后的数据进行处理并返回给前端
+        serializer = self.get_serializer(instance=obj_pro, many=True)
         '''3. 将从数据库中获取到的数据返回给前端'''
-        return Response(serializer_data.data)
+        return Response(serializer.data)
 
     def post(self, request):
         '''
@@ -86,22 +115,22 @@ class ProjectsList(GenericAPIView):
         '''
         在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
         '''
-        serializer_data = self.get_serializer(data=dict_data)
+        serializer = self.get_serializer(data=dict_data)
         # 调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         # 如果raise_exception=True，那么校验失败后，会抛出异常
         try:
-            serializer_data.is_valid(raise_exception=True)
+            serializer.is_valid(raise_exception=True)
         except Exception as e:
             # 当调用is_valid()方法后，才可以调用errors属性，获取校验失败返回的错误提示信息
-            return Response(serializer_data.errors)
+            return Response(serializer.errors)
         '''3.向数据库中添加一条数据，新增项目'''
         '''校验成功后的数据，可以使用`序列化对象.validated_data`属性来获取校验成功后的数据'''
         '''
         在创建序列化器时，如果给data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的create()方法
         '''
-        serializer_data.save()
+        serializer.save()
         '''4.将序列化数据返回给前端'''
-        return Response(serializer_data.data, status=201)
+        return Response(serializer.data, status=201)
 
 # 1. 需要继承GenericAPIView基类
 class ProjectsDetail(GenericAPIView):
@@ -132,9 +161,9 @@ class ProjectsDetail(GenericAPIView):
         obj_pro = self.get_object()
         # 3.将返回的数据序列化成json格式数据，返回给前端
         # 使用get_serializer()方法获取序列化器类
-        serializer_data = self.get_serializer(instance=obj_pro)
+        serializer = self.get_serializer(instance=obj_pro)
         # 如果前端请求中未指定Accept，那么默认返回json格式数据
-        return Response(serializer_data.data, status=200)
+        return Response(serializer.data, status=200)
 
     def put(self, request, pk):
         '''1.校验前端传递的pk(项目ID)值，类型是否正确(正整数),在数据库中是否存在'''
@@ -147,20 +176,20 @@ class ProjectsDetail(GenericAPIView):
         '''
         在创建序列化器时，如果同时给instance和data传参，那么在调用`序列化器.save()`方法时，会自动化调用序列化器对象的update()方法
         '''
-        serializer_data = self.get_serializer(instance=obj_pro, data=dict_data)
+        serializer = self.get_serializer(instance=obj_pro, data=dict_data)
         '''
         调用序列化器对象的is_valid()方法来校验前端传入的参数，如果校验成功返回True，否则返回失败
         如果raise_exception=True，那么校验失败后，会抛出异常
         '''
         try:
-            serializer_data.is_valid(raise_exception=True)
+            serializer.is_valid(raise_exception=True)
         except Exception as e:
             # 当调用is_valid()方法后，才可以调用errors属性，获取校验失败返回的错误提示信息
-            return Response(serializer_data.errors)
+            return Response(serializer.errors)
         '''4.更新项目, 通过前端传递过来的数据对字段值进行修改'''
-        serializer_data.save()
+        serializer.save()
         '''5.序列化数据，返回给前端'''
-        return Response(serializer_data.data, status=201)
+        return Response(serializer.data, status=201)
 
     def delete(self, request, pk):
         '''1.校验前端传递的pk(项目ID)值，类型是否正确(正整数),在数据库中是否存在'''

@@ -64,6 +64,11 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
+    # 指定全局分页引擎
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'utils.custom_pagination.PageNumberPaginationCustom',
+    # 同时必须指定每页要展示的数据条数(如果指定了自定义分页引擎，且在自定义分页引擎中指定了`page_size`，则在这里不需要再配置`PAGE_SIZE`了)
+    # 'PAGE_SIZE': 3,
 }
 
 MIDDLEWARE = [
