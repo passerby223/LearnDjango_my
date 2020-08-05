@@ -17,7 +17,7 @@ class PageNumberPaginationCustom(PageNumberPagination):
     page_query_param = 'p'
     # 默认情况下，每一页显示的数据条数为2,可以在前端通过入参`s`参数任意指定条数为其他数值
     # 比如：http -v :8000/api/v1/projects/ p==1 s==4
-    page_size = 2
+    page_size = 5
     # 指定前端调分页接口时`分页大小参数`为s(默认为空)，比如：http -v :8000/api/v1/projects/ p==2 s==4
     page_size_query_param = 's'
     # 指定前端能分页的最大页数为50
