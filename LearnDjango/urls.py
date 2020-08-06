@@ -29,5 +29,5 @@ urlpatterns = [
     # 会从子应用projects的路由表urls文件中去查找对应的路由，执行对应路由绑定的视图方法
     # path('hello/', include('projects.urls')),
     # 类视图的父路由
-    path('api/v1/projects/', include('projects.urls'))
+    path('api/v1/', include('projects.urls'))
 ]

@@ -182,3 +182,12 @@ class ProjectModelSerializer(serializers.ModelSerializer):
     #     instance.desc = validated_data.get('desc')
     #     instance.save()
     #     return instance
+
+class ProjectNameModelSerializer(serializers.ModelSerializer):
+    '''
+    获取所有项目的name序列化器
+    '''
+    class Meta:
+        model = Projects
+        # ②如果需要模型类的部分字段来生成模型类序列化器，则指定fields=(字段1, 字段2, ...)，此时fields的值只能是`元组`类型
+        fields = ('id', 'name')
