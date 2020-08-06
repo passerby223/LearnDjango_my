@@ -96,8 +96,8 @@ filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
 filterset_fields = ['id', 'name', 'leader']
 ```
 ## 在setting.py文件中中全局指定过滤引擎
-    ```python
-    # 注册app
+```python
+# 注册app
     INSTALLED_APPS = [
         'django.contrib.admin',
         'django.contrib.auth',
@@ -131,4 +131,4 @@ filterset_fields = ['id', 'name', 'leader']
                 'django_filters.rest_framework.DjangoFilterBackend',
             ],
     }
-    ```
+```
