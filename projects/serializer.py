@@ -201,6 +201,10 @@ class InterfaceDetailSerializer(serializers.ModelSerializer):
 
 
 class InterfacesByProjectIdSerializer(serializers.ModelSerializer):
+    '''
+    父表没有显式提供interfaces_set字段，但是隐式定义了该字段，用于获取子表的信息。
+    子表没有显式提供projects_set字段，但是隐式定义了该字段，用于获取父表的信息。
+    '''
     interfaces_set = InterfaceDetailSerializer(read_only=True, many=True)
 
     class Meta:

@@ -46,7 +46,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         获取所有项目的name
         1.可以使用action装饰器来声明自定义action动作，默认情况下，实例方法名就是action动作名
         2.methods参数用于指定该action支持的请求方法，默认是get方法
-        3.detail参数用于指定该action要处理的是是否是详情资源对象(url是否需要传递pk值)
+        3.detail参数用于指定该action要处理的是是否是详情资源对象(url是否需要传递pk值,是的话传True，不是的话传False)
         :return:
         '''
         # 1.使用get_queryset()获取查询集的所有数据
@@ -70,7 +70,13 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         '''将从数据库中获取到的数据返回给前端'''
         return Response(serializer.data)
 
-    @action(detail=False)
+    '''
+    定义url_path(路由的路径名)和url_name(路由的别名)两个参数：url_path='interfaceNames', url_name='interfaceNamesByProjectId'
+    使用routers自动生成的路由为：api/v1/ ^projects/(?P<pk>[^/.]+)/interfaceNames/$ [name='projects-interfaceNamesByProjectId']
+    如果不定义这两个参数则routers自动生成的路由为：
+    api/v1/ ^projects/(?P<pk>[^/.]+)/interfaces/$ [name='projects-interfaces']
+    '''
+    @action(detail=True)
     def interfaces(self, request, *args, **kwargs):
         '''
         获取单个project下的所有interfaces详细信息
