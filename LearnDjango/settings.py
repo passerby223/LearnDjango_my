@@ -40,13 +40,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 注册子应用projects
-    'projects.apps.ProjectsConfig',
     # 注册djangorestframework
     'rest_framework',
     # 注册django-filter
     'django_filters',
+    # 注册app，用于生成测试平台接口文档
+    'drf_yasg',
+
+    # 注册子应用projects
+    'projects.apps.ProjectsConfig',
+    # 注册子应用interface
     'interfaces.apps.InterfacesConfig',
+
 ]
 
 REST_FRAMEWORK = {
@@ -57,6 +62,8 @@ REST_FRAMEWORK = {
         # 可浏览的浏览器中html格式的API渲染器为第二优先级
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    # 指定用于支持coreapi的schema,用于生成测试平台的接口文档(会在drf>=3.12版本中移除，官方推荐使用drf-yasg)
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     # 全局指定过滤引擎,对所有类视图有效。也可以在类视图中单独指定过滤引擎，只对当前类视图有效
     # 全局指定排序过滤引擎
     # 全局指定django-filter过滤引擎

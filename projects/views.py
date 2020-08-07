@@ -19,11 +19,35 @@ from utils.custom_pagination import PageNumberPaginationCustom
 #                       viewsets.GenericViewSet):
 class ProjectsViewSet(viewsets.ModelViewSet):
     '''
-    如果继承APIView或GenericAPIView的话。下边的方法必须定义为get、post、put、delete等请求方法，这些请求方法全放到一个类中会有冲突。
-    所以需要使用viewsets.ViewSet来定义action动作
-    ViewSet不支持get、post、put、delete请求方法，只支持action动作
-    但是ViewSet中未提供get_object(), get_serializer()等方法(因为ViewSet类不会继承GenericAPIView类)，所以需要继承GenericViewSet类
+    create:
+    创建project
+
+    retrieve:
+    获取指定project详情数据
+
+    update:
+    完整更新project数据
+
+    partial_update:
+    部分更新project数据
+
+    destroy:
+    删除指定project
+
+    list:
+    获取project列表数据
+
+    names:
+    获取所有project名称
+
+    interfaces:
+    获取指定project下的所有interface数据
     '''
+    # 上边的多行注释中的`字段`对应每个`action`，`字段对应的值`为`接口文档页面`中展示的`接口描述信息`
+    # 如果继承APIView或GenericAPIView的话。下边的方法必须定义为get、post、put、delete等请求方法，这些请求方法全放到一个类中会有冲突。
+    # 所以需要使用viewsets.ViewSet来定义action动作
+    # ViewSet不支持get、post、put、delete请求方法，只支持action动作
+    # 但是ViewSet中未提供get_object(), get_serializer()等方法(因为ViewSet类不会继承GenericAPIView类)，所以需要继承GenericViewSet类
     # 1.指定查询集，queryset用于指定需要使用的查询集
     queryset = Projects.objects.all().order_by('id')
     # 2.指定序列化器，serializer_class指定需要使用到的序列化器类
@@ -42,13 +66,10 @@ class ProjectsViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def names(self, request, *args, **kwargs):
-        '''
-        获取所有项目的name
-        1.可以使用action装饰器来声明自定义action动作，默认情况下，实例方法名就是action动作名
-        2.methods参数用于指定该action支持的请求方法，默认是get方法
-        3.detail参数用于指定该action要处理的是是否是详情资源对象(url是否需要传递pk值,是的话传True，不是的话传False)
-        :return:
-        '''
+        # 获取所有项目的name
+        # 1.可以使用action装饰器来声明自定义action动作，默认情况下，实例方法名就是action动作名
+        # 2.methods参数用于指定该action支持的请求方法，默认是get方法
+        # 3.detail参数用于指定该action要处理的是是否是详情资源对象(url是否需要传递pk值,是的话传True，不是的话传False)
         # 1.使用get_queryset()获取查询集的所有数据
         queryset = self.get_queryset()
         # 2.使用filter_queryset()方法过滤查询
@@ -78,13 +99,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     '''
     @action(detail=True)
     def interfaces(self, request, *args, **kwargs):
-        '''
-        获取单个project下的所有interfaces详细信息
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        '''
+        # 获取单个project下的所有interfaces详细信息
         # 根据传入的projectId，获取该ProjectId的实例化对象
         instance = self.get_object()
         serializer = InterfacesByProjectIdSerializer(instance=instance)
