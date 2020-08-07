@@ -30,8 +30,11 @@ urlpatterns = [
         'get': 'retrieve',
         'put': 'update',
         'delete': 'destroy',
-    }), name='projects-path'),
+    })),
     path('projects/names/', ProjectsViewSet.as_view({
         'get': 'names',
     }), name='projects-names'),
+    path('projects/<int:pk>/interfaces/', ProjectsViewSet.as_view({
+        'get': 'interfaces',
+    })),
 ]

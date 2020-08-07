@@ -3,7 +3,9 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend, filterset
 from rest_framework.response import Response
 
-from projects.serializer import ProjectModelSerializer, ProjectNameModelSerializer
+from projects.serializer import ProjectModelSerializer, \
+    ProjectNameModelSerializer, \
+    InterfacesByProjectIdSerializer
 from projects.models import Projects
 
 from utils.custom_pagination import PageNumberPaginationCustom
@@ -39,7 +41,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     # pagination_class = PageNumberPaginationCustom
 
     @action(methods=['get'], detail=False)
-    def names(self, request):
+    def names(self, request, *args, **kwargs):
         '''
         获取所有项目的name
         1.可以使用action装饰器来声明自定义action动作，默认情况下，实例方法名就是action动作名
@@ -68,3 +70,16 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         '''将从数据库中获取到的数据返回给前端'''
         return Response(serializer.data)
 
+    @action(detail=False)
+    def interfaces(self, request, *args, **kwargs):
+        '''
+        获取单个project下的所有interfaces详细信息
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        # 根据传入的projectId，获取该ProjectId的实例化对象
+        instance = self.get_object()
+        serializer = InterfacesByProjectIdSerializer(instance=instance)
+        return Response(serializer.data)

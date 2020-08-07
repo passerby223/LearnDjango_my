@@ -7,6 +7,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from projects.models import Projects
+from interfaces.models import Interfaces
 
 '''外部自定义校验器'''
 
@@ -191,3 +192,17 @@ class ProjectNameModelSerializer(serializers.ModelSerializer):
         model = Projects
         # ②如果需要模型类的部分字段来生成模型类序列化器，则指定fields=(字段1, 字段2, ...)，此时fields的值只能是`元组`类型
         fields = ('id', 'name')
+
+
+class InterfaceDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Interfaces
+        fields = '__all__'
+
+
+class InterfacesByProjectIdSerializer(serializers.ModelSerializer):
+    interfaces_set = InterfaceDetailSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Projects
+        fields = ('id', 'interfaces_set')

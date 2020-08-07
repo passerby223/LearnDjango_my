@@ -55,7 +55,7 @@ REST_FRAMEWORK = {
         # json渲染器为第一优先级
         'rest_framework.renderers.JSONRenderer',
         # 可浏览的浏览器中html格式的API渲染器为第二优先级
-        # 'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     # 全局指定过滤引擎,对所有类视图有效。也可以在类视图中单独指定过滤引擎，只对当前类视图有效
     # 全局指定排序过滤引擎
